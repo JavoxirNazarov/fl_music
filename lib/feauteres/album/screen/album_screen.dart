@@ -22,20 +22,20 @@ class AlbumScreen extends StatefulWidget {
 
 class _AlbumScreenState extends State<AlbumScreen> {
   bool _collapsed = false;
+  ScrollController scrollController = ScrollController();
 
   @override
   void initState() {
-    // AlbumScreenViewModel viewModel = context.read<AlbumScreenViewModel>();
-    // viewModel.getAlbumById(widget.albumId);
-
+    // TODO: implement initState
+    scrollController.addListener(_scrollListener);
     super.initState();
   }
 
-  bool _scrollListener(PointerMoveEvent e) {
-    if (e.delta.dy < 5 && _collapsed) {
+  bool _scrollListener() {
+    if (scrollController.offset < 5 && _collapsed) {
       SchedulerBinding.instance
           .addPostFrameCallback((_) => setState(() => _collapsed = false));
-    } else if (e.delta.dy > 5 && !_collapsed) {
+    } else if (scrollController.offset > 5 && !_collapsed) {
       SchedulerBinding.instance
           .addPostFrameCallback((_) => setState(() => _collapsed = true));
     }
@@ -44,7 +44,10 @@ class _AlbumScreenState extends State<AlbumScreen> {
   }
 
   Future<void> _playAlbum(
-      BuildContext context, List<Track> tracks, int? trackIndex) async {
+    BuildContext context,
+    List<Track> tracks,
+    int? trackIndex,
+  ) async {
     final playerProvider = context.read<PlayerProvider>();
     await playerProvider.startTracks(tracks: tracks, playIndex: trackIndex);
     if (mounted) {
@@ -78,16 +81,11 @@ class _AlbumScreenState extends State<AlbumScreen> {
             ),
             Expanded(
               child: Listener(
-                // onPointerDown: (event) {
-                //   print(event.position.dy);
-                // },
-                onPointerMove: _scrollListener,
-                // onPointerUp: (event) {
-                //   print('delta ${event.delta.dy}');
-                //   print('offset ${event.position.dy}');
-                // },
-                // onNotification: _scrollListener,
+                onPointerDown: (event) {},
+                onPointerMove: (event) {},
+                onPointerUp: (event) {},
                 child: ListView.builder(
+                  controller: scrollController,
                   physics: const ClampingScrollPhysics(),
                   itemBuilder: (BuildContext context, int index) {
                     final track = tracks[index];

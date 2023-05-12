@@ -1,26 +1,20 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:top_music/common/libs/store_manager/store_manager.dart';
 
+const sessionBoxName = 'sessionBox';
+
 class SessionStore {
-  const SessionStore._();
-
-  static get intance => const SessionStore._();
-
   static Future<Box<dynamic>> init() async {
-    return Hive.openBox('sessionBox');
+    return Hive.openBox<String>(sessionBoxName);
   }
 
-  final StoreManager _store = const StoreManager();
+  SessionStore();
 
-  String? getSession() {
-    return _store.getValue('sessionBox', 'session');
-  }
+  final _store = StoreManager<String>(box: Hive.box(sessionBoxName));
 
-  void removeSession() {
-    _store.removeValue('sessionBox', 'session');
-  }
+  String? getSession() => _store.getValue('session');
 
-  void addSession(String token) {
-    _store.addValue('sessionBox', 'session', token);
-  }
+  void removeSession() => _store.removeValue('session');
+
+  void setSession(String token) => _store.addValue('session', token);
 }

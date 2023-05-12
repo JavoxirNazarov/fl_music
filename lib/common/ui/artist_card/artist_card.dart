@@ -10,7 +10,7 @@ class ArtistCard extends StatelessWidget {
 
   final ArtistModuleItem artist;
 
-  void _goToAlbum(BuildContext context, int id) {
+  void _goToArtist(BuildContext context, int id) {
     context.push(AppRouteNames.album(id));
   }
 

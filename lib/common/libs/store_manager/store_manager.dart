@@ -1,25 +1,23 @@
 import 'package:hive_flutter/hive_flutter.dart';
 
-class StoreManager {
-  const StoreManager();
-
+class StoreManager<T> {
   static Future<void> init() async {
     return Hive.initFlutter();
   }
 
-  void addValue(String storeName, String key, String value) {
-    Hive.box(storeName).put(key, value);
+  const StoreManager({required this.box});
+
+  final Box<T> box;
+
+  void addValue(String key, T value) {
+    box.put(key, value);
   }
 
-  String? getValue(String storeName, String key) {
-    return Hive.box(storeName).get(
-      key,
-    );
+  T? getValue(String key) {
+    return box.get(key);
   }
 
-  void removeValue(String storeName, String key) {
-    Hive.box(storeName).delete(
-      key,
-    );
+  void removeValue(String key) {
+    box.delete(key);
   }
 }

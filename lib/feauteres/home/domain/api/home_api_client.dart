@@ -5,25 +5,32 @@ import 'package:top_music/feauteres/home/domain/entities/home_screen_module.dart
 import 'package:top_music/feauteres/home/domain/entities/promo_module_item.dart';
 
 class HomeApiClient {
-  Future<List<HomeModule>> getHomePageModules() async {
+  const HomeApiClient({required this.apiClient});
+
+  final ApiClient apiClient;
+
+  Future<List<HomeModule>> getHomePageModules({
+    required String? sessionToken,
+  }) async {
     List<HomeModule> parser(Map<String, dynamic> json) {
       return (json['results'] as List<dynamic>)
           .map((e) => HomeModule.fromJson(e))
           .toList();
     }
 
-    final result = await ApiClient.get(
+    final result = await apiClient.get(
       path: "modules/?placeholder=pl_home_modules&sections=topmusicapp",
       parser: parser,
-      withAuth: true,
+      sessionToken: sessionToken,
     );
 
     return result;
   }
 
-  Future<List<HomeModule>> getHomePageModulesData(
-    List<HomeModule> modules,
-  ) async {
+  Future<List<HomeModule>> getHomePageModulesData({
+    required List<HomeModule> modules,
+    required String? sessionToken,
+  }) async {
     for (var module in modules) {
       if (module.model == "HomeBannerModule") {
         module.type = HomeModuleTypes.promo;
@@ -34,10 +41,10 @@ class HomeApiClient {
               .toList();
         }
 
-        final apiResponse = await ApiClient.get(
+        final apiResponse = await apiClient.get(
           path: module.params.link,
           parser: parser,
-          withAuth: true,
+          sessionToken: sessionToken,
           ignoreBaseApi: true,
         );
 
@@ -53,10 +60,10 @@ class HomeApiClient {
               .toList();
         }
 
-        final apiResponse = await ApiClient.get(
+        final apiResponse = await apiClient.get(
           path: module.params.link,
           parser: parser,
-          withAuth: true,
+          sessionToken: sessionToken,
           ignoreBaseApi: true,
         );
 
@@ -76,10 +83,10 @@ class HomeApiClient {
               .toList();
         }
 
-        final apiResponse = await ApiClient.get(
+        final apiResponse = await apiClient.get(
           path: module.params.link,
           parser: parser,
-          withAuth: true,
+          sessionToken: sessionToken,
           ignoreBaseApi: true,
         );
 
@@ -97,9 +104,14 @@ class HomeApiClient {
     return modules;
   }
 
-  Future<List<HomeModule>> getHomePage() async {
-    final modules = await getHomePageModules();
-    final result = await getHomePageModulesData(modules);
+  Future<List<HomeModule>> getHomePage({
+    required String? sessionToken,
+  }) async {
+    final modules = await getHomePageModules(sessionToken: sessionToken);
+    final result = await getHomePageModulesData(
+      modules: modules,
+      sessionToken: sessionToken,
+    );
 
     return result;
   }

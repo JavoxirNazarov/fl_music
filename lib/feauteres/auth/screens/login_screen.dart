@@ -11,9 +11,9 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:uni_links/uni_links.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({
-    super.key,
-  });
+  const LoginScreen({super.key, required this.sessionStore});
+
+  final SessionStore sessionStore;
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -32,7 +32,7 @@ class _LoginScreenState extends State<LoginScreen> {
     _sub = uriLinkStream.listen((Uri? uri) {
       if (!mounted) return;
       final String token = uri.toString().substring(17);
-      SessionStore.intance.addSession(token);
+      widget.sessionStore.setSession(token);
       context.go(AppRouteNames.main);
     }, onError: (Object err) {
       if (!mounted) return;
